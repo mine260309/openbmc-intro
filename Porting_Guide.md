@@ -33,25 +33,26 @@ Let's take an example of adding machine `machine-name-2` with manufacture
    ├── conf
    │   └── layer.conf
    └── meta-machine-name-2
-     ├── conf
-     │   ├── bblayers.conf.sample
-     │   ├── conf-notes.txt
-     │   ├── layer.conf
-     │   ├── local.conf.sample
-     │   └── machine
-     │   └── machine-name-2.conf
-     ├── recipes-kernel
-     │   └── linux
-     │   ├── linux-obmc
-     │   │   └── machine-name-2.cfg
-     │   └── linux-obmc_%.bbappend
-     └── recipes-phosphor
-     ├── images
-     │   └── obmc-phosphor-image.bbappend
-     └── workbook
-     ├── machine-name-2-config
-     │   └── Machine-name-2.py
-     └── machine-name-2-config.bb
+       ├── conf
+       │   ├── bblayers.conf.sample
+       │   ├── conf-notes.txt
+       │   ├── layer.conf
+       │   ├── local.conf.sample
+       │   └── machine
+       │       └── machine-name-2.conf
+       ├── recipes-kernel
+       │   └── linux
+       │       ├── linux-obmc
+       │       │   └── machine-name-2.cfg  # Machine specific kernel configs
+       │       └── linux-obmc_%.bbappend
+       └── recipes-phosphor
+           ...
+           ├── images
+           │   └── obmc-phosphor-image.bbappend  # Machine specfic apps/services to include
+           └── workbook
+               ├── machine-name-2-config
+               │   └── Machine-name-2.py  # Machine specific workbook (see below)
+               └── machine-name-2-config.bb
    ```
 
 The above creates a new layer for the machine, so you can build with
@@ -120,7 +121,73 @@ and check the power state.
 
 ### Miscs
 
+Different machines have different devices, e.g. hwmon sensors, leds, fans.
+
+OpenBMC is designed to be configurable, so you could describe such devices in
+different config files in the machine layer.
+
 #### Hwmon Sensors
+
+Hwmon sensors include sensors on board (e.g. temperature sensors, fans) and
+OCC sensors.
+The config files path and name shall match the devices in device tree.
+
+There is detailed document in openbmc [doc/sensor-architecture][6].
+
+Here let's take Romulus as exmaple.
+The config files are in [meta-romulus/recipes-phosphor/sensors][7] which
+includes sensors on board and sensors of OCC, where on board sensors are via
+i2c and occ sensors are via FSI.
+
+* [w83773g@4c.conf][8] defines the `w83773` temperature sensor containing 3
+temperatures:
+   ```
+   LABEL_temp1 = "outlet"
+   ...
+   LABEL_temp2 = "inlet_cpu"
+   ...
+   LABEL_temp3 = "inlet_io"
+   ```
+   This device is defined in its device tree as [w83773g@4c][9].
+   When BMC starts, the udev rule will start `phosphor-hwmon` and it will create
+   temperature sensors on below DBus objects based on its sysfs attributes.
+   ```
+   /xyz/openbmc_project/sensors/temperature/outlet
+   /xyz/openbmc_project/sensors/temperature/inlet_cpu
+   /xyz/openbmc_project/sensors/temperature/inlet_io
+   ```
+* [pwm-tacho-controller@1e786000.conf][10] defines the fans and the config is
+   similar as above, the difference is that it creates `fan_tach` sensors.
+* [occ-hwmon.1.conf][11] defines the occ hwmon sensor for master CPU.
+   This config is a bit different, that it shall tell `phosphor-hwmon` to read
+   the label instead of directly getting the index of the sensor, because CPU
+   cores and DIMMs could be dynamic, e.g. CPU cores could be disabled, DIMMs
+   could be pulled out.
+   ```
+   MODE_temp1 = "label"
+   MODE_temp2 = "label"
+   ...
+   MODE_temp31 = "label"
+   MODE_temp32 = "label"
+   LABEL_temp91 = "p0_core0_temp"
+   LABEL_temp92 = "p0_core1_temp"
+   ...
+   LABEL_temp33 = "dimm6_temp"
+   LABEL_temp34 = "dimm7_temp"
+   LABEL_power2 = "p0_power"
+   ...
+   ```
+   * The `MODE_temp* = "label"` tells that if it sees `tempX`, it shall read
+      the label which is the sensor id.
+   * And `LABEL_temp* = "xxx"` tells the sensor name for the corresponding
+      sensor id.
+   * For example, if `temp1_input` is 37000 and `temp1_label` is 91 in sysfs,
+      `phosphor-hwmon` knows `temp1_input` is for sensor id 91, which is
+      `p0_core0_temp`, so it creates
+      `/xyz/openbmc_project/sensors/temperature/p0_core0_temp` with sensor
+      value 37000.
+   * The power sensors do not need to read label since all powers are
+      available on a system.
 
 #### LEDs
 
@@ -136,3 +203,9 @@ and check the power state.
 [3]: https://github.com/openbmc/skeleton
 [4]: https://github.com/openbmc/openbmc/tree/master/meta-openbmc-machines/meta-x86/meta-quanta/meta-q71l/recipes-phosphor/workbook 
 [5]: https://github.com/openbmc/skeleton/blob/master/configs/Romulus.py
+[6]: https://github.com/openbmc/docs/blob/master/sensor-architecture.md
+[7]: https://github.com/openbmc/openbmc/tree/master/meta-openbmc-machines/meta-openpower/meta-ibm/meta-romulus/recipes-phosphor/sensors
+[8]: https://github.com/openbmc/openbmc/blob/master/meta-openbmc-machines/meta-openpower/meta-ibm/meta-romulus/recipes-phosphor/sensors/phosphor-hwmon%25/obmc/hwmon/ahb/apb/i2c%401e78a000/i2c-bus%40440/w83773g%404c.conf
+[9]: https://github.com/openbmc/linux/blob/dev-4.13/arch/arm/boot/dts/aspeed-bmc-opp-romulus.dts#L194
+[10]: https://github.com/openbmc/openbmc/blob/master/meta-openbmc-machines/meta-openpower/meta-ibm/meta-romulus/recipes-phosphor/sensors/phosphor-hwmon%25/obmc/hwmon/ahb/apb/pwm-tacho-controller%401e786000.conf
+[11]: https://github.com/openbmc/openbmc/blob/master/meta-openbmc-machines/meta-openpower/meta-ibm/meta-romulus/recipes-phosphor/sensors/phosphor-hwmon%25/obmc/hwmon/devices/platform/gpio-fsi/fsi0/slave%4000--00/00--00--00--06/sbefifo1-dev0/occ-hwmon.1.conf
