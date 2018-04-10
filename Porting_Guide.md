@@ -191,6 +191,57 @@ temperatures:
 
 #### LEDs
 
+Several parts are involved for LED.
+
+1. In kernel dts, LEDs shall be described, e.g. [romulus dts][12] describes
+   3 LEDs, `fault`, `identify` and `power`.
+   ```
+     leds {
+       compatible = "gpio-leds";
+
+       fault {
+         gpios = <&gpio ASPEED_GPIO(N, 2) GPIO_ACTIVE_LOW>;
+       };
+
+       identify {
+         gpios = <&gpio ASPEED_GPIO(N, 4) GPIO_ACTIVE_HIGH>;
+       };
+
+       power {
+         gpios = <&gpio ASPEED_GPIO(R, 5) GPIO_ACTIVE_LOW>;
+       };
+     };
+   ```
+2. In machine layer, LEDs shall be configured via yaml to describe how it
+   functions, e.g.
+   ```
+   bmc_booted:
+       power:
+           Action: 'Blink'
+           DutyOn: 50
+           Period: 1000
+           Priority: 'On'
+   power_on:
+       power:
+           Action: 'On'
+           DutyOn: 50
+           Period: 0
+           Priority: 'On'
+   ```
+   It tells the LED manager to set the `power` LED to blink when BMC is ready
+   and booted, and set it on when host is powered on.
+3. At runtime, LED manager automatically set LEDs on/off/blink based on the
+   above yaml config.
+4. LED can be accessed manually via /xyz/openbmc_project/led/, e.g.
+   * Get identify LED state:
+      ```
+      curl -b cjar -k https://$bmc/xyz/openbmc_project/led/physical/identify
+      ```
+   * Set identify LED to blink:
+      ```
+      curl -b cjar -k -X PUT -H "Content-Type: application/json" -d '{"data": "xyz.openbmc_project.Led.Physical.Action.Blink" }' https://$bmc/xyz/openbmc_project/led/physical/identify/attr/State
+      ```
+
 #### GPIOs
 
 #### IPMI
@@ -201,7 +252,7 @@ temperatures:
 [1]: https://github.com/openbmc/linux/blob/dev-4.13/arch/arm/boot/dts/aspeed-bmc-opp-romulus.dts
 [2]: https://lists.ozlabs.org/listinfo/openbmc
 [3]: https://github.com/openbmc/skeleton
-[4]: https://github.com/openbmc/openbmc/tree/master/meta-openbmc-machines/meta-x86/meta-quanta/meta-q71l/recipes-phosphor/workbook 
+[4]: https://github.com/openbmc/openbmc/tree/master/meta-openbmc-machines/meta-x86/meta-quanta/meta-q71l/recipes-phosphor/workbook
 [5]: https://github.com/openbmc/skeleton/blob/master/configs/Romulus.py
 [6]: https://github.com/openbmc/docs/blob/master/sensor-architecture.md
 [7]: https://github.com/openbmc/openbmc/tree/master/meta-openbmc-machines/meta-openpower/meta-ibm/meta-romulus/recipes-phosphor/sensors
@@ -209,3 +260,4 @@ temperatures:
 [9]: https://github.com/openbmc/linux/blob/dev-4.13/arch/arm/boot/dts/aspeed-bmc-opp-romulus.dts#L194
 [10]: https://github.com/openbmc/openbmc/blob/master/meta-openbmc-machines/meta-openpower/meta-ibm/meta-romulus/recipes-phosphor/sensors/phosphor-hwmon%25/obmc/hwmon/ahb/apb/pwm-tacho-controller%401e786000.conf
 [11]: https://github.com/openbmc/openbmc/blob/master/meta-openbmc-machines/meta-openpower/meta-ibm/meta-romulus/recipes-phosphor/sensors/phosphor-hwmon%25/obmc/hwmon/devices/platform/gpio-fsi/fsi0/slave%4000--00/00--00--00--06/sbefifo1-dev0/occ-hwmon.1.conf
+[12]: https://github.com/openbmc/linux/blob/dev-4.13/arch/arm/boot/dts/aspeed-bmc-opp-romulus.dts#L35
