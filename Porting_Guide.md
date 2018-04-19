@@ -1,3 +1,23 @@
+- [Porting Guide](#porting-guide)
+  * [Porting to a new machine](#porting-to-a-new-machine)
+    + [Add machine layer](#add-machine-layer)
+    + [Kernel changes](#kernel-changes)
+    + [Workbook](#workbook)
+    + [Miscs](#miscs)
+      - [Hwmon Sensors](#hwmon-sensors)
+      - [LEDs](#leds)
+      - [Inventories and other sensors](#inventories-and-other-sensors)
+      - [Fans](#fans)
+        * [Fan presence](#fan-presence)
+        * [Fan monitor](#fan-monitor)
+        * [Fan control](#fan-control)
+      - [GPIOs](#gpios)
+        * [GPIOs in device tree](#gpios-in-device-tree)
+        * [GPIO Presence](#gpio-presence)
+        * [GPIO monitor](#gpio-monitor)
+
+---
+
 # Porting Guide
 
 In this article, it introduces the guide of how to port OpenBMC to a new
