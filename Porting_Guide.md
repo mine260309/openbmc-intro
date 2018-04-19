@@ -433,6 +433,104 @@ logic as configured specifically for the machine.
 
 
 #### GPIOs
+This section mainly focus on the GPIOs in device tree that shall be monitored.
+E.g.:
+* A GPIO may represent a signal of host checkstop;
+* A GPIO may represent a button press;
+* A GPIO may represent if a device is attached or not.
+
+They are categorized as `phosphor-gpio-presence` for checking presences of a
+device, and `phosphor-gpio-monitor` for monitoring a GPIO.
+
+##### GPIOs in device tree
+All the GPIOs to be monitored shall be described in device tree.
+E.g.
+```
+  gpio-keys {
+    compatible = "gpio-keys";
+    checkstop {
+      label = "checkstop";
+      gpios = <&gpio ASPEED_GPIO(J, 2) GPIO_ACTIVE_LOW>;
+      linux,code = <ASPEED_GPIO(J, 2)>;
+    };
+    id-button {
+      label = "id-button";
+      gpios = <&gpio ASPEED_GPIO(Q, 7) GPIO_ACTIVE_LOW>;
+      linux,code = <ASPEED_GPIO(Q, 7)>;
+    };
+  };
+```
+It describes two GPIO keys, one for `checkstop` and the other for `id-button`,
+where the key code is calculated from [aspeed-gpio.h][24]:
+```
+#define ASPEED_GPIO_PORT_A 0
+#define ASPEED_GPIO_PORT_B 1
+...
+#define ASPEED_GPIO_PORT_Y 24
+#define ASPEED_GPIO_PORT_Z 25
+#define ASPEED_GPIO_PORT_AA 26
+...
+
+#define ASPEED_GPIO(port, offset) \
+  ((ASPEED_GPIO_PORT_##port * 8) + offset)
+```
+
+##### GPIO Presence
+Witherspoon and Zaius have examples for gpio presence.
+
+* [Witherspoon][19]:
+   ```
+   INVENTORY=/system/chassis/motherboard/powersupply0
+   DEVPATH=/dev/input/by-path/platform-gpio-keys-event
+   KEY=104
+   NAME=powersupply0
+   DRIVERS=/sys/bus/i2c/drivers/ibm-cffps,3-0069
+   ```
+   It checks GPIO key 104 for `powersupply0`'s presence, creates the inventory
+   object and bind or unbind the driver.
+* [Zaius][20]:
+   ```
+   INVENTORY=/system/chassis/pcie_card_e2b
+   DEVPATH=/dev/input/by-path/platform-gpio-keys-event
+   KEY=39
+   NAME=pcie_card_e2b
+   ```
+   It checks GPIO key 39 for `pcie_card_e2b`'s presence, and creates the
+   inventory object.
+
+##### GPIO monitor
+Typical useage of GPIO monitor is to monitor the checkstop event from host, or
+button presses.
+
+* [checkstop monitor][21] is a common service for OpenPOWER machines.
+   ```
+   DEVPATH=/dev/input/by-path/platform-gpio-keys-event
+   KEY=74
+   POLARITY=1
+   TARGET=obmc-host-crash@0.target
+   ```
+   By default it monitors GPIO key 74, and if it is triggered, it tells
+   systemd to start `obmc-host-crash@0.target`.
+   For systems using a different GPIO pin for checkstop, it simply overrides
+   the default one by specifying its own config file in meta-machine layer.
+   E.g. [Zaius's checkstop config][22].
+   **Note**: when the key is pressed, `phospohr-gpio-monitor` starts the target
+   unit and exits.
+* [id-button monitor][23] is an example service on Romulus to monitor ID
+   button press.
+   ```
+   DEVPATH=/dev/input/by-path/platform-gpio-keys-event
+   KEY=135
+   POLARITY=1
+   TARGET=id-button-pressed.service
+   EXTRA_ARGS=--continue
+   ```
+   It monitors GPIO key 135 for the button press and starts
+   `id-button-pressed.service`, that handles the event by setting the identify
+   LED group's `Assert` property.
+   **Note**: It has extra argument `--continue` that tells
+   `phosphor-gpio-monitor` to not exit and continue running when the key is
+   pressed.
 
 
 [1]: https://github.com/openbmc/linux/blob/dev-4.13/arch/arm/boot/dts/aspeed-bmc-opp-romulus.dts
@@ -453,3 +551,9 @@ logic as configured specifically for the machine.
 [16]: https://github.com/openbmc/phosphor-fan-presence
 [17]: https://github.com/openbmc/phosphor-fan-presence/blob/master/control/example/events.yaml
 [18]: https://github.com/openbmc/openbmc/tree/master/meta-openbmc-machines/meta-openpower/meta-ibm/meta-witherspoon/recipes-phosphor/fans
+[19]: https://github.com/openbmc/openbmc/blob/master/meta-openbmc-machines/meta-openpower/meta-ibm/meta-witherspoon/recipes-phosphor/gpio/phosphor-gpio-monitor/obmc/gpio/phosphor-power-supply-0.conf
+[20]: https://github.com/openbmc/openbmc/blob/master/meta-openbmc-machines/meta-openpower/meta-ingrasys/meta-zaius/recipes-phosphor/gpio/phosphor-gpio-monitor/obmc/gpio/phosphor-pcie-card-e2b.conf
+[21]: https://github.com/openbmc/openbmc/blob/master/meta-openbmc-machines/meta-openpower/common/recipes-phosphor/host/checkstop-monitor.bb
+[22]: https://github.com/openbmc/openbmc/blob/master/meta-openbmc-machines/meta-openpower/meta-ingrasys/meta-zaius/recipes-phosphor/host/checkstop-monitor/obmc/gpio/checkstop
+[23]: https://github.com/openbmc/openbmc/tree/master/meta-openbmc-machines/meta-openpower/meta-ibm/meta-romulus/recipes-phosphor/gpio
+[24]: https://github.com/openbmc/linux/blob/dev-4.13/include/dt-bindings/gpio/aspeed-gpio.h
