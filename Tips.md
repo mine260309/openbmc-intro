@@ -27,7 +27,9 @@ It will add `<WORKDIR>/scripts/` to your PATH and `devtool` is in it.
 
 Below are real examples.
 
+
 #### devtool on ipmi
+
 If you want to debug or adding new function in ipmi, you probably need to
 change the code in [phosphor-host-ipmid][2].
 Checking the recipes, you know this repo is in [phosphor-ipmi-host.bb][3].
@@ -58,6 +60,57 @@ test it.
    ```
 5. Now you can test your changes.
 
+
+### Develop linux kernel
+
+#### devtool on linux kernel
+If you want to work on linux kernel, you can use devtool as well, with some
+differences from regular repo.
+
+1. It does not create `devtool` branch, instead, it checkout the branch
+   specified in the recipe.
+   E.g. on OpenBMC v2.2 tag, `linux-obmc_4.13.bb` specifies `dev-4.13` branch.
+2. If there are patches, `devtool` applies the them directly on the branch.
+3. It copies the defconfig and machine specific config into `oe-workdir`.
+4. It generates `.config` based on the above configs.
+
+You can modify the code and build the kernel as usual by
+```
+bitbake linux-obmc -c build
+```
+
+#### Modify config
+If you need to change the config and save it as defconfig for further use:
+```
+bitbake linux-obmc -c menuconfig
+# Edit the configs and after save it generates
+# .config.new as the new kernel config
+
+bitbake linux-obmc -c savedefconfig
+# It will save the new defconfig at oe-workdir/linux-obmc-<version>/defconfig
+```
+
+#### Test linux kernel
+After build, you can flash the image to test the new kernel.
+However, it is always slow to flash an image to the chip.
+
+There is a faster way to load the kernel via network so you can easily test
+kernel builds.
+
+OpenBMC kernel build generates fit image, including kernel, dtb and initramfs.
+Typically we can load it via tftp, taking Romulus as example:
+1. Put `build/tmp/deploy/images/romulus/fitImage-obmc-phosphor-initramfs-romulus.bin`
+   to a tftp server, name it to `fitImage`
+2. Reboot BMC and press keys to enter uboot shell;
+3. In uboot:
+   ```
+   setenv ethaddr <mac:addr>  # Set mac address if there it is unavailable
+   setenv ipaddr 192.168.0.80  # Set BMC IP
+   setenv serverip 192.168.0.11  # Set tftp server IP
+   tftp 0x83000000 fitImage  # Load fit image to ram. Use 0x43000000 on AST2400
+   bootm 0x83000000  # Boot from fit image
+   ```
+Then you are running an OpenBMC with your updated kernel.
 
 
 [1]: https://github.com/openbmc/docs/blob/master/cheatsheet.md
