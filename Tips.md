@@ -67,6 +67,11 @@ test it.
 If you want to work on linux kernel, you can use devtool as well, with some
 differences from regular repo.
 
+**Note**: As of [ac72846][4] the linux kernel recipe name is changed to
+`linux-aspeed` for Aspeed based OpenBMC builds.
+So replace below `linux-obmc` to `linux-aspeed` if you are on a revision after
+that.
+
 1. It does not create `devtool` branch, instead, it checkout the branch
    specified in the recipe.
    E.g. on OpenBMC v2.2 tag, `linux-obmc_4.13.bb` specifies `dev-4.13` branch.
@@ -116,3 +121,4 @@ Then you are running an OpenBMC with your updated kernel.
 [1]: https://github.com/openbmc/docs/blob/master/cheatsheet.md
 [2]: https://github.com/openbmc/phosphor-host-ipmid
 [3]: https://github.com/openbmc/openbmc/blob/master/meta-phosphor/common/recipes-phosphor/ipmi/phosphor-ipmi-host.bb
+[4]: https://github.com/openbmc/openbmc/commit/ac7284629ea572cf27d69949dc4014b3b226f14f
