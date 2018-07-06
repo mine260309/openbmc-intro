@@ -8,6 +8,50 @@ know the related concepts, e.g. recipes.
 Note: refer to [cheatsheet.md][1] for existing tips. This article is expected
 to be merged to that doc in future.
 
+### Building
+
+#### Share downloads dir
+It takes a long time for the first build of OpenBMC, it downloads various repos
+from internet.
+
+Check `build/downloads`, you will see all the downloaded repos.
+
+* If a repo is a single archive, it usually looks like
+   * `zlib-1.2.11.tar.xz` - The repo itself
+   * `zlib-1.2.11.tar.xz.done` - A flag indicating the repo is downloaded
+* If a repo is managed by git, it usually looks like
+   * `git2/github.com.openbmc.linux` - The git bare clone
+   * `git2/github.com.openbmc.linux.done` - A flag indicating the repo is downloaded
+
+Bitbake will extract the code to working dir during build, so the `downloads`
+directory could be shared by different builds on a system, e.g. by creating a
+symbol link.
+
+So if you have cloned openbmc in a different dir and want to build it, you
+could:
+```
+ln -sf <path>/<to>/<existing>/downalods build/downloads
+```
+And do the build, it will save a lot of time of downloading codes.
+
+#### Using git proxy
+If you experience exterem slow download speed during code fetch (e.g. if you
+are in China), it is possible to use a git proxy to speedup the code fetch.
+
+Google `git-proxy-wrapper` you will find various ways to setup the proxy for
+git protocol.
+
+Below is my wrapper, assuming I have a local socks5 proxy at port 9054
+```
+#!/bin/sh
+## Use connect-proxy as git proxy wrapper which supports SOCKS5
+## Install with `apt-get install connect-proxy`
+## And use with `export GIT_PROXY_COMMAND=~/bin/git-proxy-wrapper`
+/usr/bin/connect -S localhost:9054 "$@"
+```
+Then you can run `export GIT_PROXY_COMMAND=~/bin/git-proxy-wrapper` and you are
+now downloading git code through your proxy.
+
 ### devtool
 
 `devtool` is a convenient utility in Yocto to make changes in local directory.
