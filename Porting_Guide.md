@@ -283,6 +283,7 @@ E.g. [meta-romulus/recipes-phosphor/ipmi][15]
    motherboard.
 * `phosphor-ipmi-fru-properties` defines extra properties of the inventories.
 * `phosphor-ipmi-sensor-inventory` defines the sensors from IPMI.
+* `romulus-ipmi-inventory-sel` defines inventories used for IPMI SEL.
 
 For inventory map and fru-properties, they are similar between different
 systems, you can refer to this exmaple and make one for your system.
