@@ -75,6 +75,13 @@ Eventually the host is started when all the dependent services are started.
 
 Let's walk through the code and get an overview of the components.
 
+**Important Note**:
+1. Below code structure reflects to OpenBMC tag v2.3
+2. Starting from [194ff4f][5], the meta-machines are moved to top level,
+   maintained in separated repo, and managed by subtree.
+   So below code structure is out-of-date, but still reflect the whole picture
+   of OpenBMC's components.
+
 The major parts:
 
 | Dir              | What it is    |
@@ -166,3 +173,4 @@ It is similar for any other component for how it is defined and configured.
 [2]: https://github.com/openbmc/u-boot
 [3]: https://github.com/openbmc/linux
 [4]: https://github.com/openbmc/docs/blob/master/openbmc-systemd.md
+[5]: https://github.com/openbmc/openbmc/commit/194ff4f1f5d44b12e9cb06ddafa6adb20174a13c

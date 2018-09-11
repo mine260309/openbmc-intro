@@ -42,8 +42,7 @@ To port OpenBMC to a new machine, usually it includes:
 Let's take an example of adding machine `machine-name-2` with manufacture
 `manufacturer-1`.
 
-1. Create `meta-manufacturer-1` under `meta-openbmc-machines/meta-openpower`
-   as a directory of `manufacturer-1`;
+1. Under existing repo `meta-manufacturer-1`, or create a new one
 2. Create `meta-machine-name-2` under `meta_manufacturer-1` as a directory for
    the machine
 3. Use machine name `machine-name-2` instead of `manufacturer-1` in config
@@ -79,7 +78,7 @@ Let's take an example of adding machine `machine-name-2` with manufacture
 
 The above creates a new layer for the machine, so you can build with
 ```
-TEMPLATECONF=meta-openbmc-machines/meta-openpower/meta-manufacturer-1/meta-machine-name-2/conf . oe-init-build-env
+TEMPLATECONF=meta-manufacturer-1/meta-machine-name-2/conf . oe-init-build-env
 bitbake obmc-phosphor-image
 ```
 
@@ -557,24 +556,24 @@ button presses.
 [1]: https://github.com/openbmc/linux/blob/dev-4.13/arch/arm/boot/dts/aspeed-bmc-opp-romulus.dts
 [2]: https://lists.ozlabs.org/listinfo/openbmc
 [3]: https://github.com/openbmc/skeleton
-[4]: https://github.com/openbmc/openbmc/tree/master/meta-openbmc-machines/meta-x86/meta-quanta/meta-q71l/recipes-phosphor/workbook
+[4]: https://github.com/openbmc/openbmc/tree/master/meta-quanta/meta-q71l/recipes-phosphor/workbook
 [5]: https://github.com/openbmc/skeleton/blob/master/configs/Romulus.py
 [6]: https://github.com/openbmc/docs/blob/master/sensor-architecture.md
-[7]: https://github.com/openbmc/openbmc/tree/master/meta-openbmc-machines/meta-openpower/meta-ibm/meta-romulus/recipes-phosphor/sensors
-[8]: https://github.com/openbmc/openbmc/blob/master/meta-openbmc-machines/meta-openpower/meta-ibm/meta-romulus/recipes-phosphor/sensors/phosphor-hwmon%25/obmc/hwmon/ahb/apb/i2c%401e78a000/i2c-bus%40440/w83773g%404c.conf
+[7]: https://github.com/openbmc/openbmc/tree/master/meta-ibm/meta-romulus/recipes-phosphor/sensors
+[8]: https://github.com/openbmc/openbmc/blob/master/meta-ibm/meta-romulus/recipes-phosphor/sensors/phosphor-hwmon%25/obmc/hwmon/ahb/apb/i2c%401e78a000/i2c-bus%40440/w83773g%404c.conf
 [9]: https://github.com/openbmc/linux/blob/dev-4.13/arch/arm/boot/dts/aspeed-bmc-opp-romulus.dts#L194
-[10]: https://github.com/openbmc/openbmc/blob/master/meta-openbmc-machines/meta-openpower/meta-ibm/meta-romulus/recipes-phosphor/sensors/phosphor-hwmon%25/obmc/hwmon/ahb/apb/pwm-tacho-controller%401e786000.conf
-[11]: https://github.com/openbmc/openbmc/blob/master/meta-openbmc-machines/meta-openpower/meta-ibm/meta-romulus/recipes-phosphor/sensors/phosphor-hwmon%25/obmc/hwmon/devices/platform/gpio-fsi/fsi0/slave%4000--00/00--00--00--06/sbefifo1-dev0/occ-hwmon.1.conf
+[10]: https://github.com/openbmc/openbmc/blob/master/meta-ibm/meta-romulus/recipes-phosphor/sensors/phosphor-hwmon%25/obmc/hwmon/ahb/apb/pwm-tacho-controller%401e786000.conf
+[11]: https://github.com/openbmc/openbmc/blob/master/meta-ibm/meta-romulus/recipes-phosphor/sensors/phosphor-hwmon%25/obmc/hwmon/devices/platform/gpio-fsi/fsi0/slave%4000--00/00--00--00--06/sbefifo1-dev0/occ-hwmon.1.conf
 [12]: https://github.com/openbmc/linux/blob/dev-4.13/arch/arm/boot/dts/aspeed-bmc-opp-romulus.dts#L35
 [13]: https://github.com/openbmc/phosphor-mrw-tools
-[14]: https://github.com/openbmc/openbmc/blob/master/meta-openbmc-machines/meta-openpower/meta-ibm/meta-witherspoon/conf/distro/openbmc-witherspoon.conf#L3
-[15]: https://github.com/openbmc/openbmc/tree/master/meta-openbmc-machines/meta-openpower/meta-ibm/meta-romulus/recipes-phosphor/ipmi
+[14]: https://github.com/openbmc/openbmc/blob/master/meta-ibm/meta-witherspoon/conf/distro/openbmc-witherspoon.conf#L3
+[15]: https://github.com/openbmc/openbmc/tree/master/meta-ibm/meta-romulus/recipes-phosphor/ipmi
 [16]: https://github.com/openbmc/phosphor-fan-presence
 [17]: https://github.com/openbmc/phosphor-fan-presence/blob/master/control/example/events.yaml
-[18]: https://github.com/openbmc/openbmc/tree/master/meta-openbmc-machines/meta-openpower/meta-ibm/meta-witherspoon/recipes-phosphor/fans
-[19]: https://github.com/openbmc/openbmc/blob/master/meta-openbmc-machines/meta-openpower/meta-ibm/meta-witherspoon/recipes-phosphor/gpio/phosphor-gpio-monitor/obmc/gpio/phosphor-power-supply-0.conf
-[20]: https://github.com/openbmc/openbmc/blob/master/meta-openbmc-machines/meta-openpower/meta-ingrasys/meta-zaius/recipes-phosphor/gpio/phosphor-gpio-monitor/obmc/gpio/phosphor-pcie-card-e2b.conf
-[21]: https://github.com/openbmc/openbmc/blob/master/meta-openbmc-machines/meta-openpower/common/recipes-phosphor/host/checkstop-monitor.bb
-[22]: https://github.com/openbmc/openbmc/blob/master/meta-openbmc-machines/meta-openpower/meta-ingrasys/meta-zaius/recipes-phosphor/host/checkstop-monitor/obmc/gpio/checkstop
-[23]: https://github.com/openbmc/openbmc/tree/master/meta-openbmc-machines/meta-openpower/meta-ibm/meta-romulus/recipes-phosphor/gpio
+[18]: https://github.com/openbmc/openbmc/tree/master/meta-ibm/meta-witherspoon/recipes-phosphor/fans
+[19]: https://github.com/openbmc/openbmc/blob/master/meta-ibm/meta-witherspoon/recipes-phosphor/gpio/phosphor-gpio-monitor/obmc/gpio/phosphor-power-supply-0.conf
+[20]: https://github.com/openbmc/openbmc/blob/master/meta-ingrasys/meta-zaius/recipes-phosphor/gpio/phosphor-gpio-monitor/obmc/gpio/phosphor-pcie-card-e2b.conf
+[21]: https://github.com/openbmc/openbmc/blob/master/meta-openpower/recipes-phosphor/host/checkstop-monitor.bb
+[22]: https://github.com/openbmc/openbmc/blob/master/meta-ingrasys/meta-zaius/recipes-phosphor/host/checkstop-monitor/obmc/gpio/checkstop
+[23]: https://github.com/openbmc/openbmc/tree/master/meta-ibm/meta-romulus/recipes-phosphor/gpio
 [24]: https://github.com/openbmc/linux/blob/dev-4.13/include/dt-bindings/gpio/aspeed-gpio.h
