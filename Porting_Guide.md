@@ -561,12 +561,12 @@ button presses.
 [6]: https://github.com/openbmc/docs/blob/master/sensor-architecture.md
 [7]: https://github.com/openbmc/openbmc/tree/master/meta-ibm/meta-romulus/recipes-phosphor/sensors
 [8]: https://github.com/openbmc/openbmc/blob/master/meta-ibm/meta-romulus/recipes-phosphor/sensors/phosphor-hwmon%25/obmc/hwmon/ahb/apb/i2c%401e78a000/i2c-bus%40440/w83773g%404c.conf
-[9]: https://github.com/openbmc/linux/blob/dev-4.13/arch/arm/boot/dts/aspeed-bmc-opp-romulus.dts#L194
+[9]: https://github.com/openbmc/linux/blob/aca92be80c008bceeb6fb62fd1d450b5be5d0a4f/arch/arm/boot/dts/aspeed-bmc-opp-romulus.dts#L208
 [10]: https://github.com/openbmc/openbmc/blob/master/meta-ibm/meta-romulus/recipes-phosphor/sensors/phosphor-hwmon%25/obmc/hwmon/ahb/apb/pwm-tacho-controller%401e786000.conf
 [11]: https://github.com/openbmc/openbmc/blob/master/meta-ibm/meta-romulus/recipes-phosphor/sensors/phosphor-hwmon%25/obmc/hwmon/devices/platform/gpio-fsi/fsi0/slave%4000--00/00--00--00--06/sbefifo1-dev0/occ-hwmon.1.conf
-[12]: https://github.com/openbmc/linux/blob/dev-4.13/arch/arm/boot/dts/aspeed-bmc-opp-romulus.dts#L35
+[12]: https://github.com/openbmc/linux/blob/aca92be80c008bceeb6fb62fd1d450b5be5d0a4f/arch/arm/boot/dts/aspeed-bmc-opp-romulus.dts#L42
 [13]: https://github.com/openbmc/phosphor-mrw-tools
-[14]: https://github.com/openbmc/openbmc/blob/master/meta-ibm/meta-witherspoon/conf/distro/openbmc-witherspoon.conf#L3
+[14]: https://github.com/openbmc/openbmc/blob/764b88f4056cc98082e233216704e94613499e64/meta-ibm/meta-witherspoon/conf/distro/openbmc-witherspoon.conf#L4
 [15]: https://github.com/openbmc/openbmc/tree/master/meta-ibm/meta-romulus/recipes-phosphor/ipmi
 [16]: https://github.com/openbmc/phosphor-fan-presence
 [17]: https://github.com/openbmc/phosphor-fan-presence/blob/master/control/example/events.yaml
