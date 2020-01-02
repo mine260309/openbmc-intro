@@ -127,7 +127,7 @@ Most OpenBMC services are in `meta-phosphor/common/recipes-phosphor/`.
 ## Layers
 
 OpenBMC is based on [Yocto][1], and the build has the concept of layers, where each
-component is overrided or appended by the upper layer.
+component is overridden or appended by the upper layer.
 
 For example, you will see below output during building Romulus:
 ```
