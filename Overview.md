@@ -172,5 +172,5 @@ It is similar for any other component for how it is defined and configured.
 [1]: https://www.yoctoproject.org/
 [2]: https://github.com/openbmc/u-boot
 [3]: https://github.com/openbmc/linux
-[4]: https://github.com/openbmc/docs/blob/master/openbmc-systemd.md
+[4]: https://github.com/openbmc/docs/blob/master/architecture/openbmc-systemd.md
 [5]: https://github.com/openbmc/openbmc/commit/194ff4f1f5d44b12e9cb06ddafa6adb20174a13c

@@ -558,7 +558,7 @@ button presses.
 [3]: https://github.com/openbmc/skeleton
 [4]: https://github.com/openbmc/openbmc/tree/master/meta-quanta/meta-q71l/recipes-phosphor/workbook
 [5]: https://github.com/openbmc/skeleton/blob/master/configs/Romulus.py
-[6]: https://github.com/openbmc/docs/blob/master/sensor-architecture.md
+[6]: https://github.com/openbmc/docs/blob/master/architecture/sensor-architecture.md
 [7]: https://github.com/openbmc/openbmc/tree/master/meta-ibm/meta-romulus/recipes-phosphor/sensors
 [8]: https://github.com/openbmc/openbmc/blob/master/meta-ibm/meta-romulus/recipes-phosphor/sensors/phosphor-hwmon%25/obmc/hwmon/ahb/apb/i2c%401e78a000/i2c-bus%40440/w83773g%404c.conf
 [9]: https://github.com/openbmc/linux/blob/aca92be80c008bceeb6fb62fd1d450b5be5d0a4f/arch/arm/boot/dts/aspeed-bmc-opp-romulus.dts#L208
